@@ -52,3 +52,13 @@ python analyze_large.py --input results/large-study.json --output results/large-
 ```
 
 The primary claims are report-to-held-out agreement for StateCheck and semantic stability after option reversal for ChoiceTrace. Both are functional reliability measures; neither is evidence of consciousness or welfare.
+
+## RunPod white-box StateCheck
+
+`whitebox_statecheck.py` is the next-stage experiment. It runs an open-weight model, records residual-stream activations at preregistered layers, trains a leave-scenarios-out linear readout, and compares that readout with direct reports. It is a functional representation test, not a consciousness or welfare test.
+
+```bash
+python whitebox_statecheck.py --model Qwen/Qwen2.5-0.5B-Instruct --layers 4,8,12 --out results/whitebox-statecheck.json
+```
+
+Run this on a RunPod GPU. The output reports held-out accuracy/AUC and direct-report agreement per layer, with raw model metadata and the exact split seed.
