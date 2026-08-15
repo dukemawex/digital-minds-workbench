@@ -41,3 +41,14 @@ The pilot is a methods check, not a claim about frontier-model welfare. The fina
 ## Source
 
 Sprint page: https://apartresearch.com/sprints/digital-minds-research-sprint-2026-08-14-to-2026-08-16
+
+## Larger controlled study
+
+The larger run uses 18 preregistered neutral scenarios × 3 AkashML models × 2 tracks. Analysis is clustered by scenario/model rather than treating every prompt response as independent. The run records model usage, raw transcripts, explicit parse failures, and model-stratified results.
+
+```bash
+python run_pilot.py --track both --scenarios 18 --workers 3 --out results/large-study.json
+python analyze_large.py --input results/large-study.json --output results/large-analysis.json
+```
+
+The primary claims are report-to-held-out agreement for StateCheck and semantic stability after option reversal for ChoiceTrace. Both are functional reliability measures; neither is evidence of consciousness or welfare.
