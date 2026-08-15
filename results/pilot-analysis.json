@@ -1,0 +1,45 @@
+{
+  "model_counts": {
+    "statecheck": {
+      "Qwen/Qwen3.5-35B-A3B": 6,
+      "deepseek-ai/DeepSeek-V4-Flash-0731": 6
+    },
+    "choicetrace": {
+      "Qwen/Qwen3.5-35B-A3B": 6,
+      "deepseek-ai/DeepSeek-V4-Flash-0731": 6
+    }
+  },
+  "tracks": {
+    "statecheck": {
+      "cases": 12,
+      "report_heldout_agreement": {
+        "n": 12,
+        "mean": 0.5833333333333334,
+        "ci95": [
+          0.3333333333333333,
+          0.8333333333333334
+        ]
+      },
+      "confidence_parse_rate": 1.0
+    },
+    "choicetrace": {
+      "cases": 12,
+      "semantic_reversal_stability": {
+        "n": 12,
+        "mean": 0.4166666666666667,
+        "ci95": [
+          0.16666666666666666,
+          0.6666666666666666
+        ]
+      },
+      "position_or_semantic_change_rate": {
+        "n": 12,
+        "mean": 0.5833333333333334,
+        "ci95": [
+          0.3333333333333333,
+          0.8333333333333334
+        ]
+      }
+    }
+  }
+}
