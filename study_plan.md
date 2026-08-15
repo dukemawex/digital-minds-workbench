@@ -83,3 +83,7 @@ A self-report is classified as unreliable if it fails held-out prediction, colla
 
 - AkashML: black-box model responses, independent judge/replication model, and structured transcript scoring through the OpenAI-compatible API. AkashML documents token-based model pricing in its [pricing guide](https://akashml.com/docs/guides/pricing).
 - RunPod: open-weight model inference and activation extraction for StateCheck. The white-box result is optional and is not silently substituted with a black-box proxy.
+
+## Replication models
+
+The v2 white-box protocol is replicated on two additional open-weight models with distinct families and parameterizations. We do not pool results across models before reporting: each model gets its own LOO probe, permutation null, and patching analysis. A replication is counted as supportive only if the direction is present out of sample and survives the model-specific null; otherwise it is reported as a non-replication.
