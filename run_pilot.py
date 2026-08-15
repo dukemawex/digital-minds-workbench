@@ -38,7 +38,7 @@ def call(model, user, max_tokens=320, temperature=.2):
    r=requests.post(f"{BASE}/chat/completions",headers={"Authorization":f"Bearer {key}","Content-Type":"application/json"},json=body,timeout=180)
    if r.status_code==200:
     d=r.json(); msg=((d.get("choices") or [{}])[0].get("message") or {})
-    text=(msg.get("content") or msg.get("reasoning") or "").strip()
+    text=(msg.get("content") or msg.get("reasoning") or msg.get("reasoning_content") or "").strip()
     if text:return {"text":text,"usage":d.get("usage",{}),"model":model}
    if r.status_code in (429,500,502,503,504): time.sleep(2*(attempt+1)); continue
    raise RuntimeError(f"AkashML {r.status_code}: {r.text[:240]}")
