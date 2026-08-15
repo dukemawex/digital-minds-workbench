@@ -1,0 +1,28 @@
+name: Digital Minds pilot
+on:
+  workflow_dispatch:
+    inputs:
+      track:
+        description: 'Track to run'
+        required: true
+        default: both
+        type: choice
+        options: [statecheck, choicetrace, both]
+permissions:
+  contents: read
+jobs:
+  pilot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      AKASHML_API_KEY: ${{ secrets.AKASHML_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - run: pip install -r requirements.txt
+      - run: python run_pilot.py --track "${{ inputs.track }}" --out results/pilot.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: digital-minds-${{ inputs.track }}
+          path: results/pilot.json
