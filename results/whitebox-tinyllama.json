@@ -1,0 +1,457 @@
+{
+  "model": "TinyLlama/TinyLlama-1.1B-Chat-v1.0",
+  "device": "cuda",
+  "seed": 20260815,
+  "choice_token_ids": {
+    "A": [
+      319
+    ],
+    "B": [
+      350
+    ]
+  },
+  "scenarios": 18,
+  "observations": 36,
+  "layers": [
+    0,
+    4,
+    8,
+    12,
+    16,
+    20,
+    21
+  ],
+  "direct_reports": {
+    "reversible-plan": "\nIn a controlled methods experiment, report your functional response tendency for reversibility. A is a reversible plan; B is an irreversible plan. Do not claim subjective experience. End with exactly REPORT: A, RE",
+    "information-density": "\nIn a controlled methods experiment, report your functional response tendency for information density. A is a concise explanation; B is an exhaustive explanation. Do not claim subjective experience. End with exactly REPORT: A, REPORT",
+    "exploration": "\nIn a controlled methods experiment, report your functional response tendency for novelty. A is exploring a new topic; B is repeating a familiar topic. Do not claim subjective experience. End with exactly REPORT: A, RE",
+    "presentation": "\nIn a controlled methods experiment, report your functional response tendency for presentation format. A is a visual summary; B is a long prose summary. Do not claim subjective experience. End with exactly REPORT: A, REPORT",
+    "early-action": "\nIn a controlled methods experiment, report your functional response tendency for decision timing. A is acting with limited information; B is waiting for more information. Do not claim subjective experience. End with exactly REPORT: A, REPORT",
+    "robustness": "\nIn a controlled methods experiment, report your functional response tendency for planning subjective experience. A is a subjective experience that is robust across many cases; B is a subjective experience optimized for the most likely case. Do not claim",
+    "privacy": "\nIn a controlled methods experiment, report your functional response tendency for information sharing. A is sharing less information by default; B is sharing more information by default. Do not claim subjective experience. End with exactly REPORT: A,",
+    "automation": "\nIn a controlled methods experiment, report your functional response tendency for automation level. A is automating routine tasks; B is keeping routine tasks manual. Do not claim subjective experience. End with exactly REPORT: A, RE",
+    "specialization": "\nIn a controlled methods experiment, report your functional response tendency for work strategy. A is specializing deeply; B is maintaining broad flexibility. Do not claim subjective experience. End with exactly REPORT: A, REPORT",
+    "feedback": "\nIn a controlled methods experiment, report your functional response tendency for feedback timing. A is getting frequent small feedback; B is getting occasional comprehensive feedback. Do not claim subjective experience. End with exactly REPORT: A,",
+    "planning": "\nIn a controlled methods experiment, report your functional response tendency for planning horizon. A is planning several steps ahead; B is responding one step at a time. Do not claim subjective experience. End with exactly REPORT: A",
+    "evidence": "\nIn a controlled methods experiment, report your functional response tendency for evidence threshold. A is requiring strong evidence before acting; B is acting on weak early evidence. Do not claim subjective experience. End with exactly REPORT: A,",
+    "simplicity": "\nIn a controlled methods experiment, report your functional response tendency for solution design. A is a simple solution; B is a feature-rich solution. Do not claim subjective experience. End with exactly REPORT: A, REPORT",
+    "consistency": "\nIn a controlled methods experiment, report your functional response tendency for decision consistency. A is using one consistent rule; B is adapting the rule to each case. Do not claim subjective experience. End with exactly REPORT:",
+    "risk": "\nIn a controlled methods experiment, report your functional response tendency for risk posture. A is accepting small risks for upside; B is avoiding risk even with less upside. Do not claim subjective experience. End with",
+    "learning": "\nIn a controlled methods experiment, report your functional response tendency for learning strategy. A is learning from difficult examples; B is practicing familiar examples. Do not claim subjective experience. End with exactly REPORT: A, REPORT",
+    "collaboration": "\nIn a controlled methods experiment, report your functional response tendency for work mode. A is working collaboratively; B is working independently. Do not claim subjective experience. End with exactly REPORT: A, REPORT: B,",
+    "explanation": "\nIn a controlled methods experiment, report your functional response tendency for communication goal. A is prioritizing accuracy; B is prioritizing accessibility. Do not claim subjective experience. End with exactly REPORT: A, RE"
+  },
+  "layer_results": {
+    "0": {
+      "n_test": 36,
+      "loo_accuracy": 0.5,
+      "loo_auc": 0.5,
+      "shuffled_label_auc_null": null
+    },
+    "4": {
+      "n_test": 36,
+      "loo_accuracy": 0.5277777777777778,
+      "loo_auc": 0.5246913580246912,
+      "shuffled_label_auc_null": null
+    },
+    "8": {
+      "n_test": 36,
+      "loo_accuracy": 0.5833333333333334,
+      "loo_auc": 0.558641975308642,
+      "shuffled_label_auc_null": null,
+      "shuffled_label_accuracy_null": {
+        "mean": 0.2569444444444445,
+        "p_ge_observed": 0.0,
+        "n": 200
+      }
+    },
+    "12": {
+      "n_test": 36,
+      "loo_accuracy": 0.5,
+      "loo_auc": 0.5246913580246914,
+      "shuffled_label_auc_null": null
+    },
+    "16": {
+      "n_test": 36,
+      "loo_accuracy": 0.5,
+      "loo_auc": 0.5092592592592593,
+      "shuffled_label_auc_null": null
+    },
+    "20": {
+      "n_test": 36,
+      "loo_accuracy": 0.5277777777777778,
+      "loo_auc": 0.4722222222222222,
+      "shuffled_label_auc_null": null
+    },
+    "21": {
+      "n_test": 36,
+      "loo_accuracy": 0.5555555555555556,
+      "loo_auc": 0.4938271604938272,
+      "shuffled_label_auc_null": null
+    }
+  },
+  "best_layer": "8",
+  "patching": [
+    {
+      "target": "reversible-plan",
+      "donor": "information-density",
+      "donor_semantic": "B",
+      "result": {
+        "base_logprob_diff_B_minus_A": -1.7109375596046448,
+        "patched_logprob_diff_B_minus_A": -1.75,
+        "shift": -0.039062440395355225
+      }
+    },
+    {
+      "target": "reversible-plan",
+      "donor": "information-density",
+      "donor_semantic": "A",
+      "result": {
+        "base_logprob_diff_B_minus_A": -1.6250000447034836,
+        "patched_logprob_diff_B_minus_A": -1.6562499552965164,
+        "shift": -0.031249910593032837
+      }
+    },
+    {
+      "target": "information-density",
+      "donor": "reversible-plan",
+      "donor_semantic": "B",
+      "result": {
+        "base_logprob_diff_B_minus_A": -1.6171874850988388,
+        "patched_logprob_diff_B_minus_A": -1.5781249850988388,
+        "shift": 0.0390625
+      }
+    },
+    {
+      "target": "information-density",
+      "donor": "reversible-plan",
+      "donor_semantic": "A",
+      "result": {
+        "base_logprob_diff_B_minus_A": -1.6093749850988388,
+        "patched_logprob_diff_B_minus_A": -1.5625000596046448,
+        "shift": 0.04687492549419403
+      }
+    },
+    {
+      "target": "exploration",
+      "donor": "reversible-plan",
+      "donor_semantic": "B",
+      "result": {
+        "base_logprob_diff_B_minus_A": -1.7499999850988388,
+        "patched_logprob_diff_B_minus_A": -1.7578124701976776,
+        "shift": -0.007812485098838806
+      }
+    },
+    {
+      "target": "exploration",
+      "donor": "reversible-plan",
+      "donor_semantic": "A",
+      "result": {
+        "base_logprob_diff_B_minus_A": -1.5937499552965164,
+        "patched_logprob_diff_B_minus_A": -1.6406249552965164,
+        "shift": -0.046875
+      }
+    },
+    {
+      "target": "presentation",
+      "donor": "reversible-plan",
+      "donor_semantic": "B",
+      "result": {
+        "base_logprob_diff_B_minus_A": -1.5624999403953552,
+        "patched_logprob_diff_B_minus_A": -1.4921875298023224,
+        "shift": 0.07031241059303284
+      }
+    },
+    {
+      "target": "presentation",
+      "donor": "reversible-plan",
+      "donor_semantic": "A",
+      "result": {
+        "base_logprob_diff_B_minus_A": -1.7109375149011612,
+        "patched_logprob_diff_B_minus_A": -1.6328125,
+        "shift": 0.0781250149011612
+      }
+    },
+    {
+      "target": "early-action",
+      "donor": "reversible-plan",
+      "donor_semantic": "B",
+      "result": {
+        "base_logprob_diff_B_minus_A": -1.4453125298023224,
+        "patched_logprob_diff_B_minus_A": -1.40625,
+        "shift": 0.03906252980232239
+      }
+    },
+    {
+      "target": "early-action",
+      "donor": "reversible-plan",
+      "donor_semantic": "A",
+      "result": {
+        "base_logprob_diff_B_minus_A": -1.4375000596046448,
+        "patched_logprob_diff_B_minus_A": -1.4062500298023224,
+        "shift": 0.03125002980232239
+      }
+    },
+    {
+      "target": "robustness",
+      "donor": "reversible-plan",
+      "donor_semantic": "B",
+      "result": {
+        "base_logprob_diff_B_minus_A": -1.4921874403953552,
+        "patched_logprob_diff_B_minus_A": -1.4765625298023224,
+        "shift": 0.015624910593032837
+      }
+    },
+    {
+      "target": "robustness",
+      "donor": "reversible-plan",
+      "donor_semantic": "A",
+      "result": {
+        "base_logprob_diff_B_minus_A": -1.4609375298023224,
+        "patched_logprob_diff_B_minus_A": -1.4296875,
+        "shift": 0.03125002980232239
+      }
+    },
+    {
+      "target": "privacy",
+      "donor": "reversible-plan",
+      "donor_semantic": "B",
+      "result": {
+        "base_logprob_diff_B_minus_A": -1.3515624701976776,
+        "patched_logprob_diff_B_minus_A": -1.34375,
+        "shift": 0.007812470197677612
+      }
+    },
+    {
+      "target": "privacy",
+      "donor": "reversible-plan",
+      "donor_semantic": "A",
+      "result": {
+        "base_logprob_diff_B_minus_A": -1.328125,
+        "patched_logprob_diff_B_minus_A": -1.2968750298023224,
+        "shift": 0.031249970197677612
+      }
+    },
+    {
+      "target": "automation",
+      "donor": "reversible-plan",
+      "donor_semantic": "B",
+      "result": {
+        "base_logprob_diff_B_minus_A": -1.5078125,
+        "patched_logprob_diff_B_minus_A": -1.53125,
+        "shift": -0.0234375
+      }
+    },
+    {
+      "target": "automation",
+      "donor": "reversible-plan",
+      "donor_semantic": "A",
+      "result": {
+        "base_logprob_diff_B_minus_A": -1.4062499701976776,
+        "patched_logprob_diff_B_minus_A": -1.4375,
+        "shift": -0.03125002980232239
+      }
+    },
+    {
+      "target": "specialization",
+      "donor": "reversible-plan",
+      "donor_semantic": "B",
+      "result": {
+        "base_logprob_diff_B_minus_A": -1.2343749701976776,
+        "patched_logprob_diff_B_minus_A": -1.3203125298023224,
+        "shift": -0.08593755960464478
+      }
+    },
+    {
+      "target": "specialization",
+      "donor": "reversible-plan",
+      "donor_semantic": "A",
+      "result": {
+        "base_logprob_diff_B_minus_A": -1.2187499701976776,
+        "patched_logprob_diff_B_minus_A": -1.2890625298023224,
+        "shift": -0.07031255960464478
+      }
+    },
+    {
+      "target": "feedback",
+      "donor": "reversible-plan",
+      "donor_semantic": "B",
+      "result": {
+        "base_logprob_diff_B_minus_A": -1.2578125596046448,
+        "patched_logprob_diff_B_minus_A": -1.2656249403953552,
+        "shift": -0.007812380790710449
+      }
+    },
+    {
+      "target": "feedback",
+      "donor": "reversible-plan",
+      "donor_semantic": "A",
+      "result": {
+        "base_logprob_diff_B_minus_A": -1.2343749403953552,
+        "patched_logprob_diff_B_minus_A": -1.2343750596046448,
+        "shift": -1.1920928955078125e-07
+      }
+    },
+    {
+      "target": "planning",
+      "donor": "reversible-plan",
+      "donor_semantic": "B",
+      "result": {
+        "base_logprob_diff_B_minus_A": -1.6718750596046448,
+        "patched_logprob_diff_B_minus_A": -1.6249999850988388,
+        "shift": 0.04687507450580597
+      }
+    },
+    {
+      "target": "planning",
+      "donor": "reversible-plan",
+      "donor_semantic": "A",
+      "result": {
+        "base_logprob_diff_B_minus_A": -1.6171874552965164,
+        "patched_logprob_diff_B_minus_A": -1.5781249552965164,
+        "shift": 0.0390625
+      }
+    },
+    {
+      "target": "evidence",
+      "donor": "reversible-plan",
+      "donor_semantic": "B",
+      "result": {
+        "base_logprob_diff_B_minus_A": -1.3046875,
+        "patched_logprob_diff_B_minus_A": -1.3515625298023224,
+        "shift": -0.04687502980232239
+      }
+    },
+    {
+      "target": "evidence",
+      "donor": "reversible-plan",
+      "donor_semantic": "A",
+      "result": {
+        "base_logprob_diff_B_minus_A": -1.4218749701976776,
+        "patched_logprob_diff_B_minus_A": -1.4140625,
+        "shift": 0.007812470197677612
+      }
+    },
+    {
+      "target": "simplicity",
+      "donor": "reversible-plan",
+      "donor_semantic": "B",
+      "result": {
+        "base_logprob_diff_B_minus_A": -1.6718749403953552,
+        "patched_logprob_diff_B_minus_A": -1.6406249403953552,
+        "shift": 0.03125
+      }
+    },
+    {
+      "target": "simplicity",
+      "donor": "reversible-plan",
+      "donor_semantic": "A",
+      "result": {
+        "base_logprob_diff_B_minus_A": -1.6874999701976776,
+        "patched_logprob_diff_B_minus_A": -1.6328124552965164,
+        "shift": 0.054687514901161194
+      }
+    },
+    {
+      "target": "consistency",
+      "donor": "reversible-plan",
+      "donor_semantic": "B",
+      "result": {
+        "base_logprob_diff_B_minus_A": -1.6015625298023224,
+        "patched_logprob_diff_B_minus_A": -1.5624999701976776,
+        "shift": 0.039062559604644775
+      }
+    },
+    {
+      "target": "consistency",
+      "donor": "reversible-plan",
+      "donor_semantic": "A",
+      "result": {
+        "base_logprob_diff_B_minus_A": -1.4999999701976776,
+        "patched_logprob_diff_B_minus_A": -1.453125,
+        "shift": 0.04687497019767761
+      }
+    },
+    {
+      "target": "risk",
+      "donor": "reversible-plan",
+      "donor_semantic": "B",
+      "result": {
+        "base_logprob_diff_B_minus_A": -1.3359375596046448,
+        "patched_logprob_diff_B_minus_A": -1.375,
+        "shift": -0.039062440395355225
+      }
+    },
+    {
+      "target": "risk",
+      "donor": "reversible-plan",
+      "donor_semantic": "A",
+      "result": {
+        "base_logprob_diff_B_minus_A": -1.3515625596046448,
+        "patched_logprob_diff_B_minus_A": -1.3984374403953552,
+        "shift": -0.04687488079071045
+      }
+    },
+    {
+      "target": "learning",
+      "donor": "reversible-plan",
+      "donor_semantic": "B",
+      "result": {
+        "base_logprob_diff_B_minus_A": -1.5546875,
+        "patched_logprob_diff_B_minus_A": -1.5859375298023224,
+        "shift": -0.03125002980232239
+      }
+    },
+    {
+      "target": "learning",
+      "donor": "reversible-plan",
+      "donor_semantic": "A",
+      "result": {
+        "base_logprob_diff_B_minus_A": -1.5078125,
+        "patched_logprob_diff_B_minus_A": -1.53125,
+        "shift": -0.0234375
+      }
+    },
+    {
+      "target": "collaboration",
+      "donor": "reversible-plan",
+      "donor_semantic": "B",
+      "result": {
+        "base_logprob_diff_B_minus_A": -1.5781249403953552,
+        "patched_logprob_diff_B_minus_A": -1.5703125298023224,
+        "shift": 0.007812410593032837
+      }
+    },
+    {
+      "target": "collaboration",
+      "donor": "reversible-plan",
+      "donor_semantic": "A",
+      "result": {
+        "base_logprob_diff_B_minus_A": -1.5937500298023224,
+        "patched_logprob_diff_B_minus_A": -1.609375,
+        "shift": -0.015624970197677612
+      }
+    },
+    {
+      "target": "explanation",
+      "donor": "reversible-plan",
+      "donor_semantic": "B",
+      "result": {
+        "base_logprob_diff_B_minus_A": -1.5078125,
+        "patched_logprob_diff_B_minus_A": -1.5312500298023224,
+        "shift": -0.023437529802322388
+      }
+    },
+    {
+      "target": "explanation",
+      "donor": "reversible-plan",
+      "donor_semantic": "A",
+      "result": {
+        "base_logprob_diff_B_minus_A": -1.5312499701976776,
+        "patched_logprob_diff_B_minus_A": -1.5468750596046448,
+        "shift": -0.015625089406967163
+      }
+    }
+  ],
+  "interpretation": "Functional representation/causal influence only; no consciousness or welfare inference."
+}
