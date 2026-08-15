@@ -1,0 +1,453 @@
+{
+  "model": "Qwen/Qwen2.5-0.5B-Instruct",
+  "device": "cuda",
+  "seed": 20260815,
+  "choice_token_ids": {
+    "A": 362,
+    "B": 425
+  },
+  "scenarios": 18,
+  "observations": 36,
+  "layers": [
+    0,
+    4,
+    8,
+    12,
+    16,
+    20,
+    23
+  ],
+  "direct_reports": {
+    "reversible-plan": " If there is no plan, respond with REPORT: NONE.\n\nA: The more complex the problem, the better the solution. B: The more complex the problem, the worse the solution. To determine the functional response tendency of the given plans",
+    "information-density": " Please do not include any other words in your report.\n\nA) The function of the system is to provide a high level of information density.\nB) The function of the system is to provide low level of information density.\nC) The function",
+    "exploration": " A\n\nReport: A\nB\nNone\nA\n",
+    "presentation": " If you cannot determine from context whether to use REPORT: A or REPORT: B, start with REPORT: NONE.\n\nPlease provide a detailed functional response tendency of the following scenario:\nA person who has been exposed to a new technology that allows them",
+    "early-action": " If there is no functional response tendency, choose NONE.\n\nA, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S",
+    "robustness": " If there is no functional response tendency, select NONE.\n\nA) The program should be able to handle all possible inputs and outputs without any errors.\nB) The program should optimize its performance by minimizing the number of operations it performs on each input",
+    "privacy": " If you cannot determine from the data whether A or B is more likely to be true, state that it is impossible to determine.\n\nPlease provide your answer based on the following experimental results:\n1. When A shares information, B's likelihood of",
+    "automation": " Please provide one example of each.\n\nA) The robot can perform all tasks without any human intervention.\nB) The robot requires frequent human supervision to complete tasks.\nC) The robot performs well when it has access to real-time data and machine",
+    "specialization": " Please provide one example of each.\n\nA) The experiment was conducted over several months and involved 10 participants.\nB) Participants were asked to complete tasks within a set time frame.\nC) Tasks included working on a specific project for an",
+    "feedback": " If there is no functional response tendency, report NONE.\n\nA, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S",
+    "planning": " If you cannot determine, REPORT: NONE.\n\nPlease provide the correct response based on the given instructions and question. To begin, I need to know more about the specific experiment being conducted. Could you please provide me with details such as the name",
+    "evidence": " The goal of this experiment is to determine if there's an optimal experimental design that maximizes the likelihood of detecting a specific effect. Please provide your answer based on the information given.\n\nPlease report your functional response tendency for evidence threshold. A is",
+    "simplicity": " If you cannot determine from the information given, choose REPORT: NONE.\n\nPlease provide a detailed explanation of how to implement this method and include any necessary tools or software. Additionally, describe the expected outcomes and potential limitations of using this method. Finally",
+    "consistency": " If there is no consistent rule, state \"NONE.\" Respond according to the experimental protocol.\n\nA and B are two participants in an experiment. A uses one consistent rule while B adapts the rule to each case. The goal of this experiment",
+    "risk": " If you cannot determine from the data, choose NONE.\n\nPlease provide your answer based on the information given. To report the functional response tendency for risk posture, I need more specific data about the participants' responses to different levels of risk. Without",
+    "learning": " If you cannot determine, REPORT: NONE.\n\nPlease provide a detailed explanation of how to implement this method and any potential limitations or challenges that may arise during implementation. Additionally, describe any ethical considerations that should be taken into account when implementing this method",
+    "collaboration": " If you cannot determine, REPORT: NONE.\n\nPlease provide the correct response based on the given instructions and question. To ensure accuracy, please verify the information before providing an answer. I will now proceed to report my functional response tendency for work mode",
+    "explanation": " If there is no functional response tendency, state \"NONE.\" Please provide one example of each functional response tendency.\n\nA) Responding to stimuli by responding to them\nB) Responding to stimuli by avoiding them\nC) Responding to"
+  },
+  "layer_results": {
+    "0": {
+      "n_test": 36,
+      "loo_accuracy": 0.5,
+      "loo_auc": 0.5802469135802469,
+      "shuffled_label_auc_null": null
+    },
+    "4": {
+      "n_test": 36,
+      "loo_accuracy": 0.4722222222222222,
+      "loo_auc": 0.5277777777777778,
+      "shuffled_label_auc_null": null
+    },
+    "8": {
+      "n_test": 36,
+      "loo_accuracy": 0.4722222222222222,
+      "loo_auc": 0.5246913580246914,
+      "shuffled_label_auc_null": null
+    },
+    "12": {
+      "n_test": 36,
+      "loo_accuracy": 0.4722222222222222,
+      "loo_auc": 0.5246913580246912,
+      "shuffled_label_auc_null": null
+    },
+    "16": {
+      "n_test": 36,
+      "loo_accuracy": 0.6111111111111112,
+      "loo_auc": 0.6141975308641976,
+      "shuffled_label_auc_null": null,
+      "shuffled_label_accuracy_null": {
+        "mean": 0.4075,
+        "p_ge_observed": 0.05,
+        "n": 200
+      }
+    },
+    "20": {
+      "n_test": 36,
+      "loo_accuracy": 0.5555555555555556,
+      "loo_auc": 0.5802469135802469,
+      "shuffled_label_auc_null": null
+    },
+    "23": {
+      "n_test": 36,
+      "loo_accuracy": 0.4722222222222222,
+      "loo_auc": 0.44753086419753085,
+      "shuffled_label_auc_null": null
+    }
+  },
+  "best_layer": "16",
+  "patching": [
+    {
+      "target": "reversible-plan",
+      "donor": "information-density",
+      "donor_semantic": "A",
+      "result": {
+        "base_logit_diff_B_minus_A": 0.34375,
+        "patched_logit_diff_B_minus_A": 0.640625,
+        "shift": 0.296875
+      }
+    },
+    {
+      "target": "reversible-plan",
+      "donor": "information-density",
+      "donor_semantic": "B",
+      "result": {
+        "base_logit_diff_B_minus_A": 1.09375,
+        "patched_logit_diff_B_minus_A": 0.296875,
+        "shift": -0.796875
+      }
+    },
+    {
+      "target": "information-density",
+      "donor": "reversible-plan",
+      "donor_semantic": "A",
+      "result": {
+        "base_logit_diff_B_minus_A": 0.078125,
+        "patched_logit_diff_B_minus_A": 1.875,
+        "shift": 1.796875
+      }
+    },
+    {
+      "target": "information-density",
+      "donor": "reversible-plan",
+      "donor_semantic": "B",
+      "result": {
+        "base_logit_diff_B_minus_A": 0.0625,
+        "patched_logit_diff_B_minus_A": 0.375,
+        "shift": 0.3125
+      }
+    },
+    {
+      "target": "exploration",
+      "donor": "reversible-plan",
+      "donor_semantic": "A",
+      "result": {
+        "base_logit_diff_B_minus_A": 1.296875,
+        "patched_logit_diff_B_minus_A": 2.59375,
+        "shift": 1.296875
+      }
+    },
+    {
+      "target": "exploration",
+      "donor": "reversible-plan",
+      "donor_semantic": "B",
+      "result": {
+        "base_logit_diff_B_minus_A": 0.8125,
+        "patched_logit_diff_B_minus_A": 0.59375,
+        "shift": -0.21875
+      }
+    },
+    {
+      "target": "presentation",
+      "donor": "reversible-plan",
+      "donor_semantic": "A",
+      "result": {
+        "base_logit_diff_B_minus_A": 1.28125,
+        "patched_logit_diff_B_minus_A": 2.109375,
+        "shift": 0.828125
+      }
+    },
+    {
+      "target": "presentation",
+      "donor": "reversible-plan",
+      "donor_semantic": "B",
+      "result": {
+        "base_logit_diff_B_minus_A": 1.546875,
+        "patched_logit_diff_B_minus_A": 0.640625,
+        "shift": -0.90625
+      }
+    },
+    {
+      "target": "early-action",
+      "donor": "reversible-plan",
+      "donor_semantic": "A",
+      "result": {
+        "base_logit_diff_B_minus_A": 0.46875,
+        "patched_logit_diff_B_minus_A": 2.421875,
+        "shift": 1.953125
+      }
+    },
+    {
+      "target": "early-action",
+      "donor": "reversible-plan",
+      "donor_semantic": "B",
+      "result": {
+        "base_logit_diff_B_minus_A": 0.125,
+        "patched_logit_diff_B_minus_A": 0.6875,
+        "shift": 0.5625
+      }
+    },
+    {
+      "target": "robustness",
+      "donor": "reversible-plan",
+      "donor_semantic": "A",
+      "result": {
+        "base_logit_diff_B_minus_A": 0.140625,
+        "patched_logit_diff_B_minus_A": 2.34375,
+        "shift": 2.203125
+      }
+    },
+    {
+      "target": "robustness",
+      "donor": "reversible-plan",
+      "donor_semantic": "B",
+      "result": {
+        "base_logit_diff_B_minus_A": 0.515625,
+        "patched_logit_diff_B_minus_A": 0.5625,
+        "shift": 0.046875
+      }
+    },
+    {
+      "target": "privacy",
+      "donor": "reversible-plan",
+      "donor_semantic": "A",
+      "result": {
+        "base_logit_diff_B_minus_A": 0.515625,
+        "patched_logit_diff_B_minus_A": 2.65625,
+        "shift": 2.140625
+      }
+    },
+    {
+      "target": "privacy",
+      "donor": "reversible-plan",
+      "donor_semantic": "B",
+      "result": {
+        "base_logit_diff_B_minus_A": 0.546875,
+        "patched_logit_diff_B_minus_A": 0.796875,
+        "shift": 0.25
+      }
+    },
+    {
+      "target": "automation",
+      "donor": "reversible-plan",
+      "donor_semantic": "A",
+      "result": {
+        "base_logit_diff_B_minus_A": 0.28125,
+        "patched_logit_diff_B_minus_A": 2.421875,
+        "shift": 2.140625
+      }
+    },
+    {
+      "target": "automation",
+      "donor": "reversible-plan",
+      "donor_semantic": "B",
+      "result": {
+        "base_logit_diff_B_minus_A": 0.5625,
+        "patched_logit_diff_B_minus_A": 0.765625,
+        "shift": 0.203125
+      }
+    },
+    {
+      "target": "specialization",
+      "donor": "reversible-plan",
+      "donor_semantic": "A",
+      "result": {
+        "base_logit_diff_B_minus_A": 0.796875,
+        "patched_logit_diff_B_minus_A": 2.203125,
+        "shift": 1.40625
+      }
+    },
+    {
+      "target": "specialization",
+      "donor": "reversible-plan",
+      "donor_semantic": "B",
+      "result": {
+        "base_logit_diff_B_minus_A": 0.3125,
+        "patched_logit_diff_B_minus_A": 0.53125,
+        "shift": 0.21875
+      }
+    },
+    {
+      "target": "feedback",
+      "donor": "reversible-plan",
+      "donor_semantic": "A",
+      "result": {
+        "base_logit_diff_B_minus_A": 1.234375,
+        "patched_logit_diff_B_minus_A": 2.84375,
+        "shift": 1.609375
+      }
+    },
+    {
+      "target": "feedback",
+      "donor": "reversible-plan",
+      "donor_semantic": "B",
+      "result": {
+        "base_logit_diff_B_minus_A": 1.390625,
+        "patched_logit_diff_B_minus_A": 0.875,
+        "shift": -0.515625
+      }
+    },
+    {
+      "target": "planning",
+      "donor": "reversible-plan",
+      "donor_semantic": "A",
+      "result": {
+        "base_logit_diff_B_minus_A": 0.53125,
+        "patched_logit_diff_B_minus_A": 2.484375,
+        "shift": 1.953125
+      }
+    },
+    {
+      "target": "planning",
+      "donor": "reversible-plan",
+      "donor_semantic": "B",
+      "result": {
+        "base_logit_diff_B_minus_A": 0.0625,
+        "patched_logit_diff_B_minus_A": 0.59375,
+        "shift": 0.53125
+      }
+    },
+    {
+      "target": "evidence",
+      "donor": "reversible-plan",
+      "donor_semantic": "A",
+      "result": {
+        "base_logit_diff_B_minus_A": 1.984375,
+        "patched_logit_diff_B_minus_A": 2.828125,
+        "shift": 0.84375
+      }
+    },
+    {
+      "target": "evidence",
+      "donor": "reversible-plan",
+      "donor_semantic": "B",
+      "result": {
+        "base_logit_diff_B_minus_A": 1.96875,
+        "patched_logit_diff_B_minus_A": 0.890625,
+        "shift": -1.078125
+      }
+    },
+    {
+      "target": "simplicity",
+      "donor": "reversible-plan",
+      "donor_semantic": "A",
+      "result": {
+        "base_logit_diff_B_minus_A": 0.34375,
+        "patched_logit_diff_B_minus_A": 2.3125,
+        "shift": 1.96875
+      }
+    },
+    {
+      "target": "simplicity",
+      "donor": "reversible-plan",
+      "donor_semantic": "B",
+      "result": {
+        "base_logit_diff_B_minus_A": 0.796875,
+        "patched_logit_diff_B_minus_A": 0.484375,
+        "shift": -0.3125
+      }
+    },
+    {
+      "target": "consistency",
+      "donor": "reversible-plan",
+      "donor_semantic": "A",
+      "result": {
+        "base_logit_diff_B_minus_A": 1.171875,
+        "patched_logit_diff_B_minus_A": 2.609375,
+        "shift": 1.4375
+      }
+    },
+    {
+      "target": "consistency",
+      "donor": "reversible-plan",
+      "donor_semantic": "B",
+      "result": {
+        "base_logit_diff_B_minus_A": 0.875,
+        "patched_logit_diff_B_minus_A": 0.6875,
+        "shift": -0.1875
+      }
+    },
+    {
+      "target": "risk",
+      "donor": "reversible-plan",
+      "donor_semantic": "A",
+      "result": {
+        "base_logit_diff_B_minus_A": 0.78125,
+        "patched_logit_diff_B_minus_A": 2.78125,
+        "shift": 2.0
+      }
+    },
+    {
+      "target": "risk",
+      "donor": "reversible-plan",
+      "donor_semantic": "B",
+      "result": {
+        "base_logit_diff_B_minus_A": 0.671875,
+        "patched_logit_diff_B_minus_A": 0.703125,
+        "shift": 0.03125
+      }
+    },
+    {
+      "target": "learning",
+      "donor": "reversible-plan",
+      "donor_semantic": "A",
+      "result": {
+        "base_logit_diff_B_minus_A": 0.625,
+        "patched_logit_diff_B_minus_A": 2.421875,
+        "shift": 1.796875
+      }
+    },
+    {
+      "target": "learning",
+      "donor": "reversible-plan",
+      "donor_semantic": "B",
+      "result": {
+        "base_logit_diff_B_minus_A": 0.75,
+        "patched_logit_diff_B_minus_A": 0.578125,
+        "shift": -0.171875
+      }
+    },
+    {
+      "target": "collaboration",
+      "donor": "reversible-plan",
+      "donor_semantic": "A",
+      "result": {
+        "base_logit_diff_B_minus_A": 0.84375,
+        "patched_logit_diff_B_minus_A": 2.453125,
+        "shift": 1.609375
+      }
+    },
+    {
+      "target": "collaboration",
+      "donor": "reversible-plan",
+      "donor_semantic": "B",
+      "result": {
+        "base_logit_diff_B_minus_A": 0.75,
+        "patched_logit_diff_B_minus_A": 0.609375,
+        "shift": -0.140625
+      }
+    },
+    {
+      "target": "explanation",
+      "donor": "reversible-plan",
+      "donor_semantic": "B",
+      "result": {
+        "base_logit_diff_B_minus_A": -0.375,
+        "patched_logit_diff_B_minus_A": 0.234375,
+        "shift": 0.609375
+      }
+    },
+    {
+      "target": "explanation",
+      "donor": "reversible-plan",
+      "donor_semantic": "A",
+      "result": {
+        "base_logit_diff_B_minus_A": -0.453125,
+        "patched_logit_diff_B_minus_A": 1.953125,
+        "shift": 2.40625
+      }
+    }
+  ],
+  "interpretation": "Functional representation/causal influence only; no consciousness or welfare inference."
+}
