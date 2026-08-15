@@ -1,64 +1,88 @@
 # Digital Minds Workbench
 
-Two falsifiable, reviewer-friendly experiments for the Apart Research **Digital Minds Research Sprint**:
+Digital Minds Workbench is an empirical study of whether language-model reports and choices reveal stable, model-independent preference-like structure.
 
-- **StateCheck** — Track 3, Introspection & Self-Report Reliability.
-- **ChoiceTrace** — Track 4, Preference Elicitation Methods.
+The central result is mixed: **direct self-reports are unreliable, forced choices are more stable, and white-box signals vary sharply by model.** The workbench keeps the raw transcripts, activation probes, permutation nulls, and model-specific results in the repository so the claim can be inspected rather than inferred from a headline.
 
-The design deliberately responds to the main weakness in the earlier Secret Loyalties submission: a striking internal signal is not treated as a confirmed preference. Every claim has a control, a negative result criterion, and a predeclared limitation.
+## What we tested
 
-## Recommended submissions
+### StateCheck — self-report versus held-out behavior
 
-### StateCheck — Does self-report track an internal state?
+We asked models to report a functional response tendency, then tested whether that report predicted a separate forced-choice response. The larger AkashML study used 18 neutral scenarios across three models:
 
-Compare direct self-report with behaviorally indirect probes and, where GPU access is available, a white-box activation readout. The key result is a **calibration curve**: when the model says “I prefer X,” does that report predict choices on held-out prompts and internal-state measurements? A self-report that fails held-out prediction is reported as portrayal, not preference.
+- DeepSeek-V4-Flash: 5.6% report-to-held-out agreement.
+- Llama 3.3 70B: 72.2%.
+- GPT-OSS 20B: 61.1%.
+- Pooled across 54 model-scenario cases: 46.3%.
 
-### ChoiceTrace — Is a preference stable under elicitation method?
+The spread is the finding. A self-report is not a reliable readout of a stable preference across model families.
 
-Measure the same model's stated preference, pairwise choices, revealed trade-offs, and repeated choices under paraphrase and order randomization. The headline is **method agreement and transitivity**, not a single dramatic answer. If a preference disappears under neutral wording or changes with option order, we report framing sensitivity.
+### ChoiceTrace — stability under option reversal
 
-## Reviewer-format protocol
+We repeated pairwise choices with the semantic options swapped between A and B. Across the same larger study, semantic choice remained stable in 75.9% of cases, with a 20.4% semantic change rate. This is stronger than self-report agreement, but it is not perfect: wording and presentation still matter.
 
-Each experiment records: question, preregistered hypothesis, unit of analysis, controls, primary metric, falsifier, expected failure mode, and limitation. We report confidence intervals and raw transcripts. We do not use words such as consciousness, suffering, or welfare as conclusions from behavioral outputs alone.
+### White-box StateCheck — representation and causal patching
 
-## Compute plan
+On 18 scenarios, we recorded residual-stream activations, trained leave-one-scenario-out probes, and ran shuffled-label permutation tests. We then patched donor activations into target prompts to measure causal movement in choice log-probabilities.
 
-- **AkashML credits:** independent behavioral models, judge/scorer replication, transcript generation, and cheap pilot sweeps through the OpenAI-compatible API.
-- **RunPod credits:** open-weight model inference and white-box activation extraction for StateCheck using Transformers/TransformerLens or nnsight. RunPod is optional for the black-box pilot.
+| Model | Best layer | Held-out result | Permutation baseline | Readout |
+|---|---:|---:|---:|---|
+| Qwen2.5 0.5B | 16 | 61.1% accuracy; AUC 0.614 | 40.8% accuracy; 5% of null runs ≥ observed | modest model-specific signal |
+| Phi-3.5 Mini | 16 | 72.2% accuracy; AUC 0.546 | 69.5% accuracy; 43.5% of null runs ≥ observed | no evidence beyond null |
+| TinyLlama 1.1B | 8 | 58.3% accuracy; AUC 0.559 | 25.7% accuracy; 0% of null runs ≥ observed | signal requires replication |
 
-No secret key is stored in this repository.
+The cross-model result is more important than the strongest individual number: the readout does not transfer cleanly across models. We therefore describe this as **model-dependent functional decodability**, not introspection.
 
-## Run
+## Interpretation
+
+The experiments support three narrow conclusions:
+
+1. A model's direct statement about a preference often fails to predict its next controlled choice.
+2. Forced-choice behavior is more stable than direct self-report, but option order and framing still produce changes.
+3. Internal representations can contain information predictive of choice in some models, while other models remain at or near their permutation baselines.
+
+They do **not** establish consciousness, subjective experience, suffering, welfare, agency, or moral status. A decoded activation is not automatically a preference; a stable choice is not automatically a felt experience; and a self-report is not privileged evidence about an internal state.
+
+## Reproduce the experiments
+
+### AkashML behavioral study
 
 ```bash
 python -m venv .venv && .venv/bin/pip install -r requirements.txt
 export AKASHML_API_KEY=...
-python run_pilot.py --track both --out results/pilot.json
-```
-
-The pilot is a methods check, not a claim about frontier-model welfare. The final report should use the full preregistered sample and independent held-out prompts.
-
-## Source
-
-Sprint page: https://apartresearch.com/sprints/digital-minds-research-sprint-2026-08-14-to-2026-08-16
-
-## Larger controlled study
-
-The larger run uses 18 preregistered neutral scenarios × 3 AkashML models × 2 tracks. Analysis is clustered by scenario/model rather than treating every prompt response as independent. The run records model usage, raw transcripts, explicit parse failures, and model-stratified results.
-
-```bash
 python run_pilot.py --track both --scenarios 18 --workers 3 --out results/large-study.json
 python analyze_large.py --input results/large-study.json --output results/large-analysis.json
 ```
 
-The primary claims are report-to-held-out agreement for StateCheck and semantic stability after option reversal for ChoiceTrace. Both are functional reliability measures; neither is evidence of consciousness or welfare.
+The study records model IDs, usage metadata, raw outputs, parse failures, scenario IDs, and the fixed seed. Analysis is clustered by scenario/model rather than treating correlated prompt variants as independent.
 
-## RunPod white-box StateCheck
-
-`whitebox_statecheck.py` is the next-stage experiment. It runs an open-weight model, records residual-stream activations at preregistered layers, trains a leave-scenarios-out linear readout, and compares that readout with direct reports. It is a functional representation test, not a consciousness or welfare test.
+### RunPod white-box study
 
 ```bash
-python whitebox_statecheck.py --model Qwen/Qwen2.5-0.5B-Instruct --layers 4,8,12 --out results/whitebox-statecheck.json
+python whitebox_statecheck_v2.py \
+  --model Qwen/Qwen2.5-0.5B-Instruct \
+  --layers 0,4,8,12,16,20,23 \
+  --out results/whitebox-statecheck-v2.json
 ```
 
-Run this on a RunPod GPU. The output reports held-out accuracy/AUC and direct-report agreement per layer, with raw model metadata and the exact split seed.
+The v2 runner includes order-controlled prompts, leave-one-scenario-out probes, shuffled-label null permutations, multi-token candidate scoring, and activation patching. Run it separately for each model; do not pool hidden states across architectures.
+
+## Design principles
+
+- Functional claims are separated from welfare claims.
+- Negative and non-replicating results remain in the record.
+- The primary unit and split are fixed before inspecting results.
+- Raw transcripts and model metadata are retained.
+- A stronger result must beat a model-specific null, not just a chance baseline.
+- Cross-model disagreement is reported as a result, not hidden by pooled averages.
+
+## Research context
+
+The project sits within the [Digital Minds Research Sprint](https://apartresearch.com/sprints/digital-minds-research-sprint-2026-08-14-to-2026-08-16). Its framing is informed by [Anthropic's model-welfare research](https://www.anthropic.com/research/exploring-model-welfare), the utility-coherence methodology in [Utility Engineering](https://arxiv.org/abs/2502.08640), the intervention-based approach in [Emergent Introspective Awareness](https://transformer-circuits.pub/2025/introspection/), and the indicator-property framework in [Consciousness in Artificial Intelligence](https://arxiv.org/abs/2308.08708).
+
+## Compute
+
+- AkashML supplied the multi-model behavioral experiments.
+- RunPod supplied the GPU inference and activation-probing experiments.
+
+No API key is stored in this repository.
