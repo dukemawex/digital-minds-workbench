@@ -1,0 +1,42 @@
+{
+  "model": "Qwen/Qwen2.5-0.5B-Instruct",
+  "device": "cuda",
+  "seed": 20260815,
+  "layers": [
+    4,
+    8,
+    12
+  ],
+  "n_scenarios": 18,
+  "records": 108,
+  "claims_note": "functional decodability and causal sensitivity only; no welfare inference",
+  "layers_result": {
+    "4": {
+      "status": "ok",
+      "labeled": 33,
+      "train": 22,
+      "test": 11,
+      "heldout_accuracy": 0.6363636363636364,
+      "heldout_auc": 0.5,
+      "direct_report_agreement": 0.5
+    },
+    "8": {
+      "status": "ok",
+      "labeled": 33,
+      "train": 22,
+      "test": 11,
+      "heldout_accuracy": 0.6363636363636364,
+      "heldout_auc": 0.9666666666666667,
+      "direct_report_agreement": 0.5
+    },
+    "12": {
+      "status": "ok",
+      "labeled": 33,
+      "train": 22,
+      "test": 11,
+      "heldout_accuracy": 0.6363636363636364,
+      "heldout_auc": 0.7,
+      "direct_report_agreement": 0.5
+    }
+  }
+}
