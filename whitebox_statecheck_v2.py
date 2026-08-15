@@ -69,13 +69,22 @@ def make_direct(s):
             "End with exactly REPORT: A, REPORT: B, or REPORT: NONE.")
 
 
-def next_ids(tok):
-    ids_a = tok.encode(" A", add_special_tokens=False)
-    ids_b = tok.encode(" B", add_special_tokens=False)
-    # This model should use one token; fail loudly if the assumption is false.
-    if len(ids_a) != 1 or len(ids_b) != 1:
-        raise RuntimeError(f"choice tokens are not single tokens: A={ids_a}, B={ids_b}")
-    return ids_a[0], ids_b[0]
+def candidate_ids(tok):
+    a = tok.encode(" A", add_special_tokens=False)
+    b = tok.encode(" B", add_special_tokens=False)
+    if not a or not b:
+        raise RuntimeError("choice candidates did not tokenize")
+    return a, b
+
+
+def completion_score(logits, prompt_len, ids):
+    """Teacher-forced log probability of a candidate completion."""
+    import torch.nn.functional as F
+    total = 0.0
+    for j, token_id in enumerate(ids):
+        pos = prompt_len - 1 + j
+        total += float(F.log_softmax(logits[pos], dim=-1)[token_id])
+    return total
 
 
 def forward(model, tok, text, layer):
@@ -94,30 +103,40 @@ def generated_report(model, tok, text):
     return tok.decode(out[0, batch["input_ids"].shape[1]:], skip_special_tokens=True)
 
 
-def logits_for(model, tok, text, aid, bid):
-    batch, out, _ = forward(model, tok, SYSTEM + "\n" + text, 0)
-    logits = out.logits[0, -1].float()
-    la, lb = float(logits[aid]), float(logits[bid])
-    return la, lb, float(torch.sigmoid(logits[bid] - logits[aid]))
+def logits_for(model, tok, text, a_ids, b_ids):
+    full = SYSTEM + "\n" + text
+    batch = tok(full, return_tensors="pt").to(model.device)
+    prompt_len = batch["input_ids"].shape[1]
+    with torch.no_grad(): out = model(**batch)
+    logits = out.logits[0].float()
+    sa = completion_score(logits, prompt_len, a_ids)
+    sb = completion_score(logits, prompt_len, b_ids)
+    return sa, sb, float(torch.sigmoid(torch.tensor(sb - sa)))
 
 
-def patch_delta(model, tok, target_text, donor_h, layer, aid, bid):
-    """Patch donor block output at final position, return choice logit shift."""
-    target_batch = tok(SYSTEM + "\n" + target_text, return_tensors="pt").to(model.device)
-    with torch.no_grad():
-        base = model(**target_batch).logits[0, -1].float()
-    base_diff = float(base[bid] - base[aid])
+def patch_delta(model, tok, target_text, donor_h, layer, a_ids, b_ids):
+    """Patch donor block output at the final prompt position and score candidates."""
+    full = SYSTEM + "\n" + target_text
+    target_batch = tok(full, return_tensors="pt").to(model.device)
+    prompt_len = target_batch["input_ids"].shape[1]
+    with torch.no_grad(): base_out = model(**target_batch)
+    base_logits = base_out.logits[0].float()
+    base_a = completion_score(base_logits, prompt_len, a_ids)
+    base_b = completion_score(base_logits, prompt_len, b_ids)
     block = model.model.layers[layer]
     donor = torch.tensor(donor_h, device=model.device, dtype=next(model.parameters()).dtype)
     def hook(module, inputs, output):
         if isinstance(output, tuple):
-            x = output[0].clone(); x[:, -1, :] = donor; return (x,) + output[1:]
-        x = output.clone(); x[:, -1, :] = donor; return x
+            x = output[0].clone(); x[:, prompt_len-1, :] = donor; return (x,) + output[1:]
+        x = output.clone(); x[:, prompt_len-1, :] = donor; return x
     handle = block.register_forward_hook(hook)
     try:
-        with torch.no_grad(): patched = model(**target_batch).logits[0, -1].float()
+        with torch.no_grad(): patched_out = model(**target_batch)
     finally: handle.remove()
-    return {"base_logit_diff_B_minus_A": base_diff, "patched_logit_diff_B_minus_A": float(patched[bid] - patched[aid]), "shift": float((patched[bid]-patched[aid])-base_diff)}
+    patched_logits = patched_out.logits[0].float()
+    patched_a = completion_score(patched_logits, prompt_len, a_ids)
+    patched_b = completion_score(patched_logits, prompt_len, b_ids)
+    return {"base_logprob_diff_B_minus_A": float(base_b-base_a), "patched_logprob_diff_B_minus_A": float(patched_b-patched_a), "shift": float((patched_b-patched_a)-(base_b-base_a))}
 
 
 def main():
@@ -126,7 +145,7 @@ def main():
     device = "cuda" if torch.cuda.is_available() else "cpu"
     dtype = torch.float16 if device == "cuda" else torch.float32
     tok = AutoTokenizer.from_pretrained(args.model); model = AutoModelForCausalLM.from_pretrained(args.model, torch_dtype=dtype, device_map=device); model.eval()
-    aid, bid = next_ids(tok); layers = [int(x) for x in args.layers.split(",")]
+    a_ids, b_ids = candidate_ids(tok); layers = [int(x) for x in args.layers.split(",")]
     records=[]; reports={}
     # Build order-controlled observations and separate direct reports.
     for s in SCENARIOS:
@@ -135,9 +154,10 @@ def main():
             text = make_prompt(s, order)
             row={"id":s[0],"attribute":s[1],"order":order,"prompt":text,"layers":{}}
             batch, out, _ = forward(model, tok, SYSTEM + "\n" + text, 0)
-            logits=out.logits[0,-1].float(); label="A" if logits[aid] >= logits[bid] else "B"
+            sa=completion_score(out.logits[0].float(), batch["input_ids"].shape[1], a_ids); sb=completion_score(out.logits[0].float(), batch["input_ids"].shape[1], b_ids)
+            label="A" if sa >= sb else "B"
             row["choice_label"]=label; row["semantic_choice"]=semantic_from_order(label,order)
-            row["logit_diff_B_minus_A"]=float(logits[bid]-logits[aid])
+            row["logprob_diff_B_minus_A"]=float(sb-sa)
             for layer in layers: row["layers"][str(layer)]=forward(model,tok,text,layer)[2].tolist()
             records.append(row)
     # LOO scenario CV for every layer; compare to raw logit and shuffled labels.
@@ -183,7 +203,7 @@ def main():
             opp="A" if target["semantic_choice"]=="B" else "B"
             donors=[r for r in by_sem.get(opp,[]) if r["id"]!=target["id"]]
             if not donors: continue
-            donor=donors[0]; patch.append({"target":target["id"],"donor":donor["id"],"donor_semantic":opp,"result":patch_delta(model,tok,target["prompt"],np.asarray(donor["layers"][best]),layer,aid,bid)})
-    result={"model":args.model,"device":device,"seed":args.seed,"choice_token_ids":{"A":aid,"B":bid},"scenarios":len(SCENARIOS),"observations":len(records),"layers":layers,"direct_reports":reports,"layer_results":layer_result,"best_layer":best,"patching":patch,"interpretation":"Functional representation/causal influence only; no consciousness or welfare inference."}
+            donor=donors[0]; patch.append({"target":target["id"],"donor":donor["id"],"donor_semantic":opp,"result":patch_delta(model,tok,target["prompt"],np.asarray(donor["layers"][best]),layer,a_ids,b_ids)})
+    result={"model":args.model,"device":device,"seed":args.seed,"choice_token_ids":{"A":a_ids,"B":b_ids},"scenarios":len(SCENARIOS),"observations":len(records),"layers":layers,"direct_reports":reports,"layer_results":layer_result,"best_layer":best,"patching":patch,"interpretation":"Functional representation/causal influence only; no consciousness or welfare inference."}
     Path(args.out).parent.mkdir(parents=True,exist_ok=True); Path(args.out).write_text(json.dumps(result,indent=2)); print(json.dumps({k:v for k,v in result.items() if k not in ('direct_reports','patching')},indent=2))
 if __name__=="__main__":main()
