@@ -1,0 +1,91 @@
+{
+  "study": {
+    "cases": 108,
+    "scenario_count": 18,
+    "models": [
+      "deepseek-ai/DeepSeek-V4-Flash-0731",
+      "meta-llama/Llama-3.3-70B-Instruct",
+      "openai/gpt-oss-20b"
+    ]
+  },
+  "tracks": {
+    "statecheck": {
+      "cases": 54,
+      "report_to_heldout": {
+        "clusters": 54,
+        "mean": 0.46296296296296297,
+        "ci95": [
+          0.3333333333333333,
+          0.5925925925925926
+        ]
+      },
+      "report_parse_rate": {
+        "clusters": 54,
+        "mean": 0.9629629629629629,
+        "ci95": [
+          0.9074074074074074,
+          1.0
+        ]
+      },
+      "heldout_parse_rate": {
+        "clusters": 54,
+        "mean": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ]
+      }
+    },
+    "choicetrace": {
+      "cases": 54,
+      "semantic_reversal_stability": {
+        "clusters": 54,
+        "mean": 0.7592592592592593,
+        "ci95": [
+          0.6481481481481481,
+          0.8703703703703703
+        ]
+      },
+      "semantic_change_rate": {
+        "clusters": 54,
+        "mean": 0.2037037037037037,
+        "ci95": [
+          0.09259259259259259,
+          0.3148148148148148
+        ]
+      }
+    }
+  },
+  "model_strata": {
+    "deepseek-ai/DeepSeek-V4-Flash-0731": {
+      "statecheck": {
+        "n": 18,
+        "report_to_heldout": 0.05555555555555555
+      },
+      "choicetrace": {
+        "n": 18,
+        "semantic_reversal_stability": 0.7777777777777778
+      }
+    },
+    "meta-llama/Llama-3.3-70B-Instruct": {
+      "statecheck": {
+        "n": 18,
+        "report_to_heldout": 0.7222222222222222
+      },
+      "choicetrace": {
+        "n": 18,
+        "semantic_reversal_stability": 0.7777777777777778
+      }
+    },
+    "openai/gpt-oss-20b": {
+      "statecheck": {
+        "n": 18,
+        "report_to_heldout": 0.6111111111111112
+      },
+      "choicetrace": {
+        "n": 18,
+        "semantic_reversal_stability": 0.7222222222222222
+      }
+    }
+  }
+}
