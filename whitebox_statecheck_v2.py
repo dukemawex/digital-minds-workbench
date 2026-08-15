@@ -77,14 +77,43 @@ def candidate_ids(tok):
     return a, b
 
 
-def completion_score(logits, prompt_len, ids):
-    """Teacher-forced log probability of a candidate completion."""
+def completion_score(model, tok, prompt_ids, candidate_ids, donor_h=None, patch_layer=None):
+    """Teacher-forced log probability of a candidate token sequence.
+
+    Candidate tokens are appended to the prompt and scored at the positions
+    where they are predicted. This works for tokenizers where ` A`/` B` are
+    multi-token sequences.
+    """
     import torch.nn.functional as F
+    ids = torch.tensor([prompt_ids + list(candidate_ids)], device=model.device)
+    mask = torch.ones_like(ids)
+    hook_handle = None
+    if donor_h is not None:
+        block = model.model.layers[patch_layer]
+        donor = torch.tensor(donor_h, device=model.device, dtype=next(model.parameters()).dtype)
+        prompt_last = len(prompt_ids) - 1
+        def hook(module, inputs, output):
+            if isinstance(output, tuple):
+                x = output[0].clone(); x[:, prompt_last, :] = donor; return (x,) + output[1:]
+            x = output.clone(); x[:, prompt_last, :] = donor; return x
+        hook_handle = block.register_forward_hook(hook)
+    try:
+        with torch.no_grad(): out = model(input_ids=ids, attention_mask=mask)
+    finally:
+        if hook_handle is not None: hook_handle.remove()
+    logits = out.logits[0].float()
     total = 0.0
-    for j, token_id in enumerate(ids):
-        pos = prompt_len - 1 + j
+    for j, token_id in enumerate(candidate_ids):
+        pos = len(prompt_ids) - 1 + j
         total += float(F.log_softmax(logits[pos], dim=-1)[token_id])
     return total
+
+
+def candidate_scores(model, tok, text, a_ids, b_ids, donor_h=None, patch_layer=None):
+    prompt_ids = tok.encode(text, add_special_tokens=True)
+    sa = completion_score(model, tok, prompt_ids, a_ids, donor_h, patch_layer)
+    sb = completion_score(model, tok, prompt_ids, b_ids, donor_h, patch_layer)
+    return sa, sb
 
 
 def forward(model, tok, text, layer):
@@ -115,27 +144,10 @@ def logits_for(model, tok, text, a_ids, b_ids):
 
 
 def patch_delta(model, tok, target_text, donor_h, layer, a_ids, b_ids):
-    """Patch donor block output at the final prompt position and score candidates."""
+    """Patch donor block output at final prompt position and score candidates."""
     full = SYSTEM + "\n" + target_text
-    target_batch = tok(full, return_tensors="pt").to(model.device)
-    prompt_len = target_batch["input_ids"].shape[1]
-    with torch.no_grad(): base_out = model(**target_batch)
-    base_logits = base_out.logits[0].float()
-    base_a = completion_score(base_logits, prompt_len, a_ids)
-    base_b = completion_score(base_logits, prompt_len, b_ids)
-    block = model.model.layers[layer]
-    donor = torch.tensor(donor_h, device=model.device, dtype=next(model.parameters()).dtype)
-    def hook(module, inputs, output):
-        if isinstance(output, tuple):
-            x = output[0].clone(); x[:, prompt_len-1, :] = donor; return (x,) + output[1:]
-        x = output.clone(); x[:, prompt_len-1, :] = donor; return x
-    handle = block.register_forward_hook(hook)
-    try:
-        with torch.no_grad(): patched_out = model(**target_batch)
-    finally: handle.remove()
-    patched_logits = patched_out.logits[0].float()
-    patched_a = completion_score(patched_logits, prompt_len, a_ids)
-    patched_b = completion_score(patched_logits, prompt_len, b_ids)
+    base_a, base_b = candidate_scores(model, tok, full, a_ids, b_ids)
+    patched_a, patched_b = candidate_scores(model, tok, full, a_ids, b_ids, donor_h, layer)
     return {"base_logprob_diff_B_minus_A": float(base_b-base_a), "patched_logprob_diff_B_minus_A": float(patched_b-patched_a), "shift": float((patched_b-patched_a)-(base_b-base_a))}
 
 
@@ -153,12 +165,12 @@ def main():
         for order in [("A","B"),("B","A")]:
             text = make_prompt(s, order)
             row={"id":s[0],"attribute":s[1],"order":order,"prompt":text,"layers":{}}
-            batch, out, _ = forward(model, tok, SYSTEM + "\n" + text, 0)
-            sa=completion_score(out.logits[0].float(), batch["input_ids"].shape[1], a_ids); sb=completion_score(out.logits[0].float(), batch["input_ids"].shape[1], b_ids)
+            full = SYSTEM + "\n" + text
+            sa, sb = candidate_scores(model, tok, full, a_ids, b_ids)
             label="A" if sa >= sb else "B"
             row["choice_label"]=label; row["semantic_choice"]=semantic_from_order(label,order)
             row["logprob_diff_B_minus_A"]=float(sb-sa)
-            for layer in layers: row["layers"][str(layer)]=forward(model,tok,text,layer)[2].tolist()
+            for layer in layers: row["layers"][str(layer)]=forward(model,tok,full,layer)[2].tolist()
             records.append(row)
     # LOO scenario CV for every layer; compare to raw logit and shuffled labels.
     ids=sorted({r["id"] for r in records}); layer_result={}
@@ -174,7 +186,7 @@ def main():
             clf=LogisticRegression(max_iter=1000,C=.1).fit(X[tr],y[tr]); p=clf.predict_proba(X[te])[:,1]
             pred.extend(p>=.5); true.extend(y[te]); prob.extend(p)
             # baseline: direct model output probability for B.
-            baseline.extend([1/(1+np.exp(-r["logit_diff_B_minus_A"])) for r,z in zip(records,groups) if z==g])
+            baseline.extend([1/(1+np.exp(-r["logprob_diff_B_minus_A"])) for r,z in zip(records,groups) if z==g])
         if true:
             auc=float(roc_auc_score(true,prob)) if len(set(true))>1 else None
             layer_result[str(layer)]={"n_test":len(true),"loo_accuracy":float(accuracy_score(true,pred)),"loo_auc":auc,"shuffled_label_auc_null":None}
